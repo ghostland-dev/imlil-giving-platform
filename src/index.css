@@ -1,0 +1,158 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 28 67% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 28 67% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 28 67% 20%;
+
+    /* Turquoise - Confiance, Eau, Vie */
+    --primary: 174 72% 56%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 174 72% 70%;
+    --primary-dark: 174 72% 40%;
+
+    /* Vert - Nature, Durabilité */
+    --secondary: 122 39% 49%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-light: 122 39% 65%;
+    
+    /* Ocre - Patrimoine, Terre */
+    --accent: 28 67% 47%;
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 28 67% 65%;
+
+    /* Or - Soleil, Énergie */
+    --gold: 51 100% 50%;
+    --gold-foreground: 28 67% 20%;
+
+    --muted: 28 20% 95%;
+    --muted-foreground: 28 20% 45%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 28 20% 90%;
+    --input: 28 20% 90%;
+    --ring: 174 72% 56%;
+
+    --radius: 0.75rem;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(174 72% 56%), hsl(122 39% 49%));
+    --gradient-warm: linear-gradient(135deg, hsl(28 67% 47%), hsl(51 100% 50%));
+    --gradient-cool: linear-gradient(135deg, hsl(174 72% 56%), hsl(174 72% 40%));
+    
+    /* Shadows */
+    --shadow-soft: 0 4px 20px hsl(174 72% 56% / 0.15);
+    --shadow-strong: 0 10px 40px hsl(174 72% 56% / 0.25);
+    
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 28 30% 8%;
+    --foreground: 28 20% 95%;
+
+    --card: 28 30% 12%;
+    --card-foreground: 28 20% 95%;
+
+    --popover: 28 30% 12%;
+    --popover-foreground: 28 20% 95%;
+
+    --primary: 174 72% 56%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 174 72% 70%;
+    --primary-dark: 174 72% 40%;
+
+    --secondary: 122 39% 49%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-light: 122 39% 65%;
+    
+    --accent: 28 67% 47%;
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 28 67% 65%;
+
+    --gold: 51 100% 50%;
+    --gold-foreground: 28 67% 20%;
+
+    --muted: 28 20% 20%;
+    --muted-foreground: 28 20% 60%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 28 20% 25%;
+    --input: 28 20% 25%;
+    --ring: 174 72% 56%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+}
+
+@layer utilities {
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .gradient-warm {
+    background: var(--gradient-warm);
+  }
+
+  .gradient-cool {
+    background: var(--gradient-cool);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-strong {
+    box-shadow: var(--shadow-strong);
+  }
+
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  .pattern-amazigh {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%2340E0D0' fill-opacity='0.05'/%3E%3C/svg%3E");
+    background-size: 60px 60px;
+  }
+}
