@@ -1,11 +1,58 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { Mail, MapPin, Phone, Facebook, Instagram, Linkedin } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface FooterProps {
   language: "fr" | "ar";
 }
 
 const Footer = ({ language }: FooterProps) => {
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from("newsletters")
+        .insert({ email: email.trim() });
+
+      if (error) {
+        throw error;
+      }
+
+      toast.success(
+        language === "fr" 
+          ? "Inscription réussie !" 
+          : "تم التسجيل بنجاح!",
+        {
+          description: language === "fr"
+            ? "Merci de vous être abonné à notre newsletter"
+            : "شكراً لاشتراكك في نشرتنا الإخبارية"
+        }
+      );
+      setEmail("");
+    } catch (error: any) {
+      toast.error(
+        language === "fr" 
+          ? "Erreur d'inscription" 
+          : "خطأ في التسجيل",
+        {
+          description: error.message.includes("duplicate") 
+            ? (language === "fr" ? "Cette adresse email est déjà inscrite" : "هذا البريد الإلكتروني مسجل بالفعل")
+            : (language === "fr" ? "Une erreur est survenue" : "حدث خطأ")
+        }
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const content = {
     fr: {
       about: "À Propos",
@@ -15,6 +62,7 @@ const Footer = ({ language }: FooterProps) => {
       rights: "Tous droits réservés.",
       legal: "Mentions Légales",
       privacy: "Politique de Confidentialité",
+      terms: "Conditions d'Utilisation",
     },
     ar: {
       about: "من نحن",
@@ -24,6 +72,7 @@ const Footer = ({ language }: FooterProps) => {
       rights: "جميع الحقوق محفوظة.",
       legal: "البنود القانونية",
       privacy: "سياسة الخصوصية",
+      terms: "شروط الاستخدام",
     },
   };
 
@@ -148,16 +197,27 @@ const Footer = ({ language }: FooterProps) => {
                 ? "Restez informé de nos projets et actualités."
                 : "ابق على اطلاع بمشاريعنا وأخبارنا."}
             </p>
-            <div className="flex flex-col space-y-2">
+            <form onSubmit={handleNewsletterSubmit} className="flex flex-col space-y-2">
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder={language === "fr" ? "Votre email" : "بريدك الإلكتروني"}
                 className="px-3 py-2 rounded-md border border-border bg-background text-sm"
+                disabled={isSubmitting}
+                required
               />
-              <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary-dark transition-smooth">
-                {language === "fr" ? "S'abonner" : "اشترك"}
+              <button 
+                type="submit"
+                disabled={isSubmitting}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary-dark transition-smooth disabled:opacity-50"
+              >
+                {isSubmitting 
+                  ? (language === "fr" ? "Inscription..." : "جاري التسجيل...")
+                  : (language === "fr" ? "S'abonner" : "اشترك")
+                }
               </button>
-            </div>
+            </form>
           </div>
         </div>
 
@@ -183,6 +243,14 @@ const Footer = ({ language }: FooterProps) => {
                 }`}
               >
                 {t.privacy}
+              </Link>
+              <Link
+                to="/terms"
+                className={`text-sm text-muted-foreground hover:text-primary transition-smooth ${
+                  language === "ar" ? "font-arabic" : ""
+                }`}
+              >
+                {t.terms}
               </Link>
             </div>
           </div>

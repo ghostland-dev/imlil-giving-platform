@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Phone, Mail, Clock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { contactFormSchema, type ContactFormData } from "@/lib/validations";
+import { supabase } from "@/integrations/supabase/client";
 import SEO from "@/components/SEO";
 
 const Contact = () => {
@@ -76,8 +77,14 @@ const Contact = () => {
       // Validate form data
       const validatedData = contactFormSchema.parse(formData);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Submit to backend
+      const { data } = await supabase.functions.invoke('send-contact-email', {
+        body: validatedData
+      });
+      
+      if (data?.error) {
+        throw new Error(data.error);
+      }
       
       toast.success(t.success, {
         description: t.successDesc,
