@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Heart, Euro, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import SEO from "@/components/SEO";
 
 const Donate = () => {
@@ -84,19 +85,61 @@ const Donate = () => {
 
   const amounts = ["20", "50", "100", "200"];
 
-  const handleDonate = () => {
-    const finalAmount = customAmount || amount;
-    toast.success(
-      language === "fr"
-        ? `Merci pour votre don de ${finalAmount}€ !`
-        : `شكراً لتبرعك بـ ${finalAmount}€!`,
-      {
-        description:
+  const handleDonate = async () => {
+    const finalAmount = parseFloat(customAmount || amount);
+    
+    if (!finalAmount || finalAmount < 5) {
+      toast.error(
+        language === "fr" ? "Montant invalide" : "مبلغ غير صالح",
+        {
+          description: language === "fr" 
+            ? "Le montant minimum est de 5€" 
+            : "الحد الأدنى للمبلغ هو 5€",
+        }
+      );
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('process-donation', {
+        body: {
+          amount: finalAmount,
+          type: donationType,
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        toast.success(
           language === "fr"
-            ? "Redirection vers la page de paiement sécurisé..."
-            : "إعادة التوجيه إلى صفحة الدفع الآمنة...",
+            ? `Merci pour votre don de ${finalAmount}€ !`
+            : `شكراً لتبرعك بـ ${finalAmount}€!`,
+          {
+            description:
+              language === "fr"
+                ? "Votre don a été traité avec succès"
+                : "تم معالجة تبرعك بنجاح",
+          }
+        );
+        
+        // Reset form
+        setAmount("50");
+        setCustomAmount("");
+      } else {
+        throw new Error(data?.error || "Donation failed");
       }
-    );
+    } catch (error: any) {
+      console.error("Donation error:", error);
+      toast.error(
+        language === "fr" ? "Erreur lors du don" : "خطأ في التبرع",
+        {
+          description: error.message || (language === "fr" 
+            ? "Une erreur est survenue. Veuillez réessayer." 
+            : "حدث خطأ. يرجى المحاولة مرة أخرى."),
+        }
+      );
+    }
   };
 
   return (
